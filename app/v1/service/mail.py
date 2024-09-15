@@ -7,8 +7,8 @@ from app.v1.utils.config import settings
 # Configura los detalles del servidor SMTP de SendGrid
 smtp_server = settings.smtp_server
 smtp_port = settings.smtp_port
-smtp_username = settings.smtp_username  # Literalmente "apikey", que es un valor fijo para SendGrid
-smtp_password = settings.smtp_password  # Tu API Key de SendGrid
+smtp_username = settings.smtp_username
+smtp_password = settings.smtp_password
 
 # Crea el mensaje
 from_address = settings.from_address
@@ -17,10 +17,10 @@ to_address = ""
 msg = MIMEMultipart()
 msg['From'] = from_address
 msg['To'] = to_address
-msg['Subject'] = "Test Email from Python using SendGrid API Key"
+msg['Subject'] = "Test Email from Python"
 
 # Agregar contenido de texto o HTML
-body = "This is a test email sent from Python using SendGrid API Key."
+body = "This is a test email sent"
 msg.attach(MIMEText(body, 'plain'))  # Usa 'html' para contenido HTML
 
 try:
