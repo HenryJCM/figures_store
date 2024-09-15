@@ -10,10 +10,14 @@ class UserBase(BaseModel):
     hashed_password: str
 
 class UserCreate(UserBase):
-    pass
+    password: str
 
 class UserOut(UserBase):
     id: UUID
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
