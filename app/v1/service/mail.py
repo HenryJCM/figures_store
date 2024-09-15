@@ -12,7 +12,7 @@ smtp_password = settings.smtp_password  # Tu API Key de SendGrid
 
 # Crea el mensaje
 from_address = settings.from_address
-to_address = "henjacolonia17@gmail.com"
+to_address = ""
 
 msg = MIMEMultipart()
 msg['From'] = from_address
