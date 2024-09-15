@@ -14,7 +14,15 @@ router = APIRouter()
 def create_new_user(user: UserCreate, db: Session = Depends(get_db)):
     hashed_password = get_password_hash(user.password)
 
-    new_user = User(id=uuid4(), first_name=user.first_name, last_name=user.last_name, city=user.city, username=user.username, hashed_password=hashed_password)
+    new_user = User(
+        id=uuid4(),
+        first_name=user.first_name,
+        last_name=user.last_name,
+        address=user.address,
+        email=user.email,
+        username=user.username,
+        hashed_password=hashed_password
+    )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -41,7 +49,8 @@ def update_user(id: UUID, user_update: UserCreate, session: Session = Depends(ge
     if user:
         user.first_name = user_update.first_name
         user.last_name = user_update.last_name
-        user.city = user_update.city
+        user.address = user_update.address
+        user.email = user_update.email
         session.commit()
 
     if not user:

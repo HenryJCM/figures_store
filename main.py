@@ -3,12 +3,14 @@ from sys import prefix
 
 from fastapi import FastAPI, Request
 
-from app.v1.router import user
+from app.v1.router import auth, user, sale
 
 # instanciamos la clase FastAPI
 app = FastAPI(prefix="api/v1")
 
+app.include_router(auth.router)
 app.include_router(user.router)
+app.include_router(sale.router)
 
 
 @app.middleware('http')
@@ -34,7 +36,7 @@ async def add_process_time_header(request: Request, call_next):
 
 @app.get('/')
 async def root():
-    return {"name": "Figures Store"}
+    return {"name": "Figures Store v1"}
 
 """
 Configuración personalizada de OpenAPI:

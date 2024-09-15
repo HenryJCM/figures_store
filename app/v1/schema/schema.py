@@ -5,9 +5,9 @@ from pydantic import BaseModel
 class UserBase(BaseModel):
     first_name: str
     last_name: str
-    city: str
+    address: str
+    email: str
     username: str
-    hashed_password: str
 
 class UserCreate(UserBase):
     password: str

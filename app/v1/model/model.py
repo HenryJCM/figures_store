@@ -11,9 +11,13 @@ class User(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
-    city = Column(String, nullable=True)
+    address = Column(String, nullable=True)
+    email = Column(String, nullable=True)
     username = Column(String, unique=True)
     hashed_password = Column(String)
+
+    sales = relationship('Sale', back_populates='user')
+    cart_items = relationship('Cart', back_populates='user')
 
 
 # Products Table
