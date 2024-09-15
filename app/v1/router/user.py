@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.v1.model.model import User
 from app.v1.schema.schema import UserOut, UserCreate
-from app.v1.utils.db import get_db, get_password_hash
+from app.v1.utils.db import get_db, get_password_hash, get_current_user
 
 router = APIRouter()
 
@@ -20,17 +20,17 @@ def create_new_user(user: UserCreate, db: Session = Depends(get_db)):
     db.refresh(new_user)
     return new_user
 
-@router.get("/all_users/", response_model=List[UserOut])
+@router.get("/all_users", response_model=List[UserOut], dependencies=[Depends(get_current_user)])
 def list_users(db: Session = Depends(get_db)):
-    list_users = db.query(User).all()   # Obtenemos todos los usuarios
-    return list_users
+    return db.query(User).all()   # Obtenemos todos los usuarios
 
-@router.get("/user/{id}")
+# API protegida por el token
+@router.get("/user/{id}", response_model=UserOut, dependencies=[Depends(get_current_user)])
 def read_user(id: UUID, session: Session = Depends(get_db)):
     user = session.query(User).get(id)
 
     if not user:
-        raise HTTPException(status_code=404, detail=f"Usuario con id {id} no se encuentra en DB")
+        raise HTTPException(status_code=404, detail=f"Usuario con id {id} no se encuentra en la DB")
 
     return user
 
