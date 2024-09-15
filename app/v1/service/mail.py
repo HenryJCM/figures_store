@@ -9,32 +9,29 @@ smtp_server = settings.smtp_server
 smtp_port = settings.smtp_port
 smtp_username = settings.smtp_username
 smtp_password = settings.smtp_password
-
-# Crea el mensaje
 from_address = settings.from_address
-to_address = ""
 
-msg = MIMEMultipart()
-msg['From'] = from_address
-msg['To'] = to_address
-msg['Subject'] = "Test Email from Python"
+def send_email(to_email, subject, body):
+    msg = MIMEMultipart()
+    msg['From'] = from_address
+    msg['To'] = to_email
+    msg['Subject'] = subject
 
-# Agregar contenido de texto o HTML
-body = "This is a test email sent"
-msg.attach(MIMEText(body, 'plain'))  # Usa 'html' para contenido HTML
+    # Agregar contenido
+    msg.attach(MIMEText(body, 'plain'))
 
-try:
-    # Conecta al servidor SMTP de SendGrid usando TLS
-    server = smtplib.SMTP(smtp_server, smtp_port)
-    server.starttls()  # Inicia cifrado TLS
-    server.login(smtp_username, smtp_password)  # Autenticarse con la API Key
+    try:
+        # Conecta al servidor SMTP de SendGrid usando TLS
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()  # Inicia cifrado TLS
+        server.login(smtp_username, smtp_password)  # Autenticarse con la API Key
 
-    # Envía el correo
-    text = msg.as_string()
-    server.sendmail(from_address, to_address, text)
+        # Envía el correo
+        text = msg.as_string()
+        server.sendmail(from_address, to_email, text)
 
-    print("Email sent successfully!")
-except Exception as e:
-    print(f"Failed to send email: {e}")
-finally:
-    server.quit()  # Cierra la conexión SMTP
+        print("El correo se envió con éxito!")
+    except Exception as e:
+        print(f"Error al enviar el correo: {e}")
+    finally:
+        server.quit()  # Cierra la conexión SMTP
