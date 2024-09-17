@@ -14,7 +14,9 @@ class User(Base):
     address = Column(String, nullable=True)
     email = Column(String, nullable=True)
     username = Column(String, unique=True)
+    role = Column(String(50), nullable=False, default="user")
     hashed_password = Column(String)
+
 
     sales = relationship('Sale', back_populates='user')
     cart_items = relationship('Cart', back_populates='user')

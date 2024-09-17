@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.v1.model.model import Cart, Product, User
 from app.v1.schema.cart import CartOut, CartBase, CartListBase, CartUpdate
-from app.v1.utils.db import get_db, get_current_user
+from app.v1.utils.db import get_db, get_current_user, require_role
 
 router = APIRouter()
 
@@ -16,10 +16,10 @@ async def add_product_to_cart(cart: CartBase, db: Session = Depends(get_db), cur
     try:
         product = db.query(Product).filter(Product.id == cart.product_id).one()
     except NoResultFound:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Producto con id {id} no existe")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Producto con id {cart.product_id} no existe")
 
     if product.stock <= 0:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Producto con id {id} no tiene stock suficiente")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Producto con id {cart.product_id} no tiene stock suficiente")
 
     # Buscar si ya existe un registro en el carrito con el mismo producto
     new_cart = None
@@ -51,7 +51,7 @@ async def add_product_to_cart(cart: CartBase, db: Session = Depends(get_db), cur
     return new_cart
 
 @router.get('/cart', response_model=CartListBase, dependencies=[Depends(get_current_user)])
-def read_cart( db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def read_cart_by_current_user( db: Session = Depends(get_db), current_user: User = Depends(require_role("admin"))):
     # Buscamos todos los productos en el carrito de compras
     carts = db.query(Cart).filter(Cart.user_id == current_user.id).order_by(Cart.date_added.asc())
     if not carts:

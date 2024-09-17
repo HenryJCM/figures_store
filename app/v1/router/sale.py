@@ -61,12 +61,22 @@ def new_sale_from_cart(db: Session = Depends(get_db)):
 
     return new_sale
 
+@router.post('/sale/{id}', response_model=SaleOut, dependencies=[Depends(get_current_user)])
+def read_sale(id: UUID, db: Session = Depends(get_db)):
+    # Encontramos la venta
+    try:
+        sale = db.query(Sale).filter(Sale.id == id).first()
+    except:
+        raise HTTPException(status_code=404, detail=f"Venta con id {id} no se encuentra en la DB")
+
+    return sale
+
 @router.post('/sale/{id}/email', dependencies=[Depends(get_current_user)])
 def send_sale_to_email(id: UUID, db: Session = Depends(get_db)):
     # Encontramos la venta
     sale = db.query(Sale).filter(Sale.id == id).first()
     if not sale:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Venta con el id {id} no existe")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Venta con el id {id} no existe en la BD")
 
     success_email = send_email(sale.user.email, "Boleta de Venta - Figures Store","sale", {"sale": sale})
 
