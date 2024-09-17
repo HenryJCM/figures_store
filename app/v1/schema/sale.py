@@ -8,6 +8,7 @@ class SaleDetailBase(BaseModel):
     product_id: UUID
     quantity: int
     unit_price: float
+    date_added: str
 
 class SaleDetailOut(SaleDetailBase):
     id: UUID

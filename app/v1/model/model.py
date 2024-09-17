@@ -75,6 +75,12 @@ class Sale(Base):
     user = relationship('User', back_populates='sales')
     sale_details = relationship('SaleDetail', back_populates='sale')
 
+    def calculate_total(self):
+        total = 0
+        for sale_detail in self.sale_details:
+            total += sale_detail.quantity * sale_detail.price
+        self.total = total
+
 
 # Sale Details Table
 class SaleDetail(Base):
