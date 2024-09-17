@@ -21,5 +21,7 @@ class Settings(BaseSettings):
     smtp_username: str = os.getenv('SMTP_USERNAME')
     smtp_password: str = os.getenv('SMTP_PASSWORD')
     from_address: str = os.getenv('FROM_ADDRESS')
+    namespace_name: str = os.getenv('NAMESPACE_NAME')
+    bucket_name: str = os.getenv('BUCKET_NAME')
 
 settings = Settings()
