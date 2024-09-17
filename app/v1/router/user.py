@@ -42,31 +42,31 @@ def read_user(id: UUID, session: Session = Depends(get_db)):
 
     return user
 
-@router.put("/user/{id}", response_model=UserOut)
-def update_user(id: UUID, user_update: UserCreate, session: Session = Depends(get_db)):
-    user = session.query(User).get(id)
-
-    if user:
-        user.first_name = user_update.first_name
-        user.last_name = user_update.last_name
-        user.address = user_update.address
-        user.email = user_update.email
-        session.commit()
-
-    if not user:
-        raise HTTPException(status_code=404, detail=f"Usuario con id {id} no fue encontrado para actualizar")
-
-    return user
-
-@router.delete("/user/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user(id: UUID, session: Session = Depends(get_db)):
-    user = session.query(User).get(id)
-
-    if user:
-        session.delete(user)
-        session.commit()
-
-    if not user:
-        raise HTTPException(status_code=404, detail=f"Usuario con id {id} no fue encontrado")
-
-    return user
+#@router.put("/user/{id}", response_model=UserOut)
+#def update_user(id: UUID, user_update: UserCreate, session: Session = Depends(get_db)):
+#    user = session.query(User).get(id)
+#
+#    if user:
+#        user.first_name = user_update.first_name
+#        user.last_name = user_update.last_name
+#        user.address = user_update.address
+#        user.email = user_update.email
+#        session.commit()
+#
+#    if not user:
+#        raise HTTPException(status_code=404, detail=f"Usuario con id {id} no fue encontrado para actualizar")
+#
+#    return user
+#
+#@router.delete("/user/{id}", status_code=status.HTTP_204_NO_CONTENT)
+#def delete_user(id: UUID, session: Session = Depends(get_db)):
+#    user = session.query(User).get(id)
+#
+#    if user:
+#        session.delete(user)
+#        session.commit()
+#
+#    if not user:
+#        raise HTTPException(status_code=404, detail=f"Usuario con id {id} no fue encontrado")
+#
+#    return user

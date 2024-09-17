@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boleta de Venta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ccc;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .header p {
+            margin: 0;
+            font-size: 16px;
+            color: #666;
+        }
+        .details {
+            margin: 20px 0;
+        }
+        .details h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .details p {
+            margin: 0;
+            font-size: 14px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .table th, .table td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+            font-size: 14px;
+        }
+        .table th {
+            background-color: #f0f0f0;
+        }
+        .total {
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 2px solid #ccc;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1>Boleta de Venta</h1>
+            <p>Date: {{ sale.date }}</p>
+        </div>
+
+        <!-- User Details Section -->
+        <div class="details">
+            <h2>Detalles del cliente</h2>
+            <p><strong>Nombre:</strong>{{ sale.user.first_name }}</p>
+            <p><strong>Correo:</strong>{{ sale.user.email }}</p>
+            <p><strong>Direccion:</strong>{{ sale.user.address }}</p>
+        </div>
+
+        <!-- Sale Details Section -->
+        <div class="details">
+            <h2>Sale Details</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio unitario</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for sale.sale_details in detail %}
+                    <tr>
+                        <td>{{ detail.product.name }}</td>
+                        <td>{{ detail.quantity }}</td>
+                        <td>{{ detail.unit_price }}</td>
+                        <td>{{ detail.quantity * detail.unit_price }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="total">Total</td>
+                        <td class="total">.s/{{ detail.total }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Footer Section -->
+        <div class="footer">
+            <p>¡Gracias por su compra!</p>
+            <p>Si tiene alguna pregunta, consulte a figures-store@gmail.com</p>
+        </div>
+    </div>
+</body>
+</html>

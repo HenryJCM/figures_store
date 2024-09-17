@@ -3,20 +3,19 @@ from sys import prefix
 
 from fastapi import FastAPI, Request
 
-from app.v1.router import auth, user, sale
+from app.v1.router import auth, user, sale, cart
 
 # instanciamos la clase FastAPI
 app = FastAPI(prefix="api/v1")
 
-app.include_router(auth.router)
-app.include_router(user.router)
-app.include_router(sale.router)
-
+@app.get('/')
+async def root():
+    return {"name": "Figures Store v1"}
 
 @app.middleware('http')
 async def add_custom_header(request: Request, call_next):
     response = await call_next(request)
-    response.headers["X-hi-name"] = "Hi Carol Welcome"
+    response.headers["X-hi-name"] = "Hi, welcome"
 
     return response
 
@@ -34,9 +33,11 @@ async def add_process_time_header(request: Request, call_next):
 
     return response
 
-@app.get('/')
-async def root():
-    return {"name": "Figures Store v1"}
+app.include_router(auth.router)
+app.include_router(user.router)
+app.include_router(cart.router)
+app.include_router(sale.router)
+
 
 """
 Configuración personalizada de OpenAPI:
