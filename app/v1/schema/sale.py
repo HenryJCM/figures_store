@@ -17,12 +17,12 @@ class SaleBase(BaseModel):
     user_id: UUID
     date: str
     total: float
-    details: List[SaleDetailBase]
+    sale_details: List[SaleDetailBase] = []
 
 
 class SaleOut(SaleBase):
     id: UUID
-    details: List[SaleDetailOut]
+    sale_details: List[SaleDetailBase] = []
 
     class Config:
         from_attributes = True

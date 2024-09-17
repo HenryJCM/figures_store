@@ -52,7 +52,7 @@ def new_sale_from_cart(db: Session = Depends(get_db)):
         # Eliminamos los productos del carrito
         db.delete(item)
 
-    new_sale.details = details
+    new_sale.sale_details = details
     new_sale.calculate_total()
 
     db.add(new_sale)
