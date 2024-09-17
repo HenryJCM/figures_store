@@ -13,6 +13,7 @@ router = APIRouter()
 
 @router.post('/sale', response_model = SaleOut, dependencies=[Depends(get_current_user)])
 def new_sale_from_cart(db: Session = Depends(get_db)):
+
     #Obtenemos el usuario de la sesion
     user = get_current_user(db)
 
@@ -61,13 +62,26 @@ def new_sale_from_cart(db: Session = Depends(get_db)):
 
     return new_sale
 
-@router.post('/sale/{id}', response_model=SaleOut, dependencies=[Depends(get_current_user)])
+@router.get('/sale/{id}', response_model=SaleOut, dependencies=[Depends(get_current_user)])
 def read_sale(id: UUID, db: Session = Depends(get_db)):
     # Encontramos la venta
     try:
         sale = db.query(Sale).filter(Sale.id == id).first()
     except:
         raise HTTPException(status_code=404, detail=f"Venta con id {id} no se encuentra en la DB")
+
+    return sale
+
+@router.delete('/sale/{id}', response_model=SaleOut, dependencies=[Depends(get_current_user)])
+def delete_sale(id: UUID, db: Session = Depends(get_db)):
+    # Encontramos la venta
+    try:
+        sale = db.query(Sale).filter(Sale.id == id).first()
+    except:
+        raise HTTPException(status_code=404, detail=f"Venta con id {id} no se encuentra en la DB")
+
+    db.delete(sale)
+    db.commit()
 
     return sale
 
