@@ -1,3 +1,4 @@
+from uuid import UUID
 from pydantic import BaseModel
 
 class BrandBase(BaseModel):
@@ -7,7 +8,7 @@ class BrandCreate(BrandBase):
     pass
 
 class BrandResponse(BrandBase):
-    id: int
+    id: UUID
 
     class Config:
         orm_mode = True

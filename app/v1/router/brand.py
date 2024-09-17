@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from ..schema.brand import BrandCreate, BrandResponse
-from ..model.model import Brand
-from ..utils.db import get_db
-from ..service.oci_service import OCIObjectStorageService
+from app.v1.schema.brand import BrandCreate, BrandResponse
+from app.v1.model.model import Brand
+from app.v1.service.oci_service import OCIObjectStorageService
+from app.v1.utils.db import get_db, get_current_user
 from typing import List
 import logging
+from uuid import uuid4, UUID
 
 router = APIRouter()
 logger = logging.getLogger("uvicorn.error")
@@ -14,10 +15,10 @@ logger = logging.getLogger("uvicorn.error")
 oci_service = OCIObjectStorageService()
 
 
-@router.post("/add_brand/", response_model=BrandResponse)
+@router.post("/add_brand", response_model=BrandResponse, dependencies=[Depends(get_current_user)])
 def register_brand(brand: BrandCreate, db: Session = Depends(get_db)):
     try:
-        db_brand = Brand(name=brand.name)
+        db_brand = Brand(id=uuid4(), name=brand.name)
         # Registrar la marca en la base de datos
         db.add(db_brand)
         db.commit()
@@ -29,10 +30,10 @@ def register_brand(brand: BrandCreate, db: Session = Depends(get_db)):
         db.rollback()  # Rollback en caso de error
         raise HTTPException(status_code=500, detail=str(e))
 
-    return JSONResponse(content={"message": f"New brand '{brand.name}' registered and folder created successfully."}, status_code=200)
+    return JSONResponse(content={"message": f"Marca '{brand.name}' registrada correctamente."}, status_code=200)
 
 
-@router.get("/all_brands/", response_model=List[BrandResponse])
+@router.get("/all_brands/", response_model=List[BrandResponse], dependencies=[Depends(get_current_user)])
 def get_brands(db: Session = Depends(get_db)):
     try:
         # Obtener todas las marcas
@@ -45,8 +46,8 @@ def get_brands(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="An unexpected error occurred")
 
 
-@router.get("/brand/{id}", response_model=BrandResponse)
-def get_brand_by_id(id: int, db: Session = Depends(get_db)):
+@router.get("/brand/{id}", response_model=BrandResponse, dependencies=[Depends(get_current_user)])
+def get_brand_by_id(id: UUID, db: Session = Depends(get_db)):
     try:
         if id is not None:
             # Obtener una marca específica por ID
@@ -70,8 +71,8 @@ def get_brand_by_id(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="An unexpected error occurred")
 
 
-@router.put("/update_brand/{brand_id}", response_model=BrandResponse)
-def update_brand(brand_id: int, brand: BrandCreate, db: Session = Depends(get_db)):
+@router.put("/update_brand/{brand_id}", response_model=BrandResponse, dependencies=[Depends(get_current_user)])
+def update_brand(brand_id: UUID, brand: BrandCreate, db: Session = Depends(get_db)):
     try:
         # Obtener la marca existente
         db_brand = db.query(Brand).filter(Brand.id == brand_id).first()
@@ -96,8 +97,8 @@ def update_brand(brand_id: int, brand: BrandCreate, db: Session = Depends(get_db
     return JSONResponse(content={"message": f"Marca '{old_name}' actualizada a '{brand.name}' exitosamente."}, status_code=200)
 
 
-@router.delete("/delete_brand/{brand_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_brand(brand_id: int, db: Session = Depends(get_db)):
+@router.delete("/delete_brand/{brand_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(get_current_user)])
+def delete_brand(brand_id: UUID, db: Session = Depends(get_db)):
     try:
         # Obtener la marca existente
         db_brand = db.query(Brand).filter(Brand.id == brand_id).first()
@@ -119,4 +120,4 @@ def delete_brand(brand_id: int, db: Session = Depends(get_db)):
         db.rollback()  # Rollback en caso de error
         raise HTTPException(status_code=500, detail=str(e))
 
-    return JSONResponse(content={"message": f"Marca '{brand_name}' eliminada exitosamente."}, status_code=204)
+    return JSONResponse(content={"message": f"Marca '{brand_name}' eliminada exitosamente."}, status_code=200)

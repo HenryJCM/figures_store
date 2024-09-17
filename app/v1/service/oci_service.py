@@ -1,7 +1,6 @@
 # services/oci_service.py
 import oci
 from oci.exceptions import ServiceError
-import os
 from app.v1.utils.config import settings
 
 
