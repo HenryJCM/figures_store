@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.v1.schema.product import ProductUpdate, ProductResponse, ProductBrandUpdate
 from app.v1.model.model import Product, Brand
 from app.v1.service.oci_service import OCIObjectStorageService
-from app.v1.utils.db import get_db, get_current_user
+from app.v1.utils.db import get_db, require_role, get_current_user
 from typing import List
 import logging
 from uuid import uuid4, UUID
@@ -16,7 +16,7 @@ logger = logging.getLogger("uvicorn.error")
 oci_service = OCIObjectStorageService()
 
 
-@router.post("/add_product/", response_model=ProductResponse, dependencies=[Depends(get_current_user)])
+@router.post("/add_product/", response_model=ProductResponse, dependencies=[Depends(require_role("admin"))])
 def register_product(
         name: str = Form(...),
         description: str = Form(None),
@@ -122,7 +122,7 @@ def read_product(id: UUID, db: Session = Depends(get_db)):
     return response
 
 
-@router.put("/update_product/{id}", response_model=ProductResponse, dependencies=[Depends(get_current_user)])
+@router.put("/update_product/{id}", response_model=ProductResponse, dependencies=[Depends(require_role("admin"))])
 def update_product(id: UUID, product_update: ProductUpdate, db: Session = Depends(get_db)):
     try:
         # Obtener el producto de la base de datos
@@ -147,7 +147,7 @@ def update_product(id: UUID, product_update: ProductUpdate, db: Session = Depend
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.put("/change_product_brand/{product_id}", dependencies=[Depends(get_current_user)])
+@router.put("/change_product_brand/{product_id}", dependencies=[Depends(require_role("admin"))])
 def change_product_brand(product_id: UUID, change_brand: ProductBrandUpdate, db: Session = Depends(get_db)):
     try:
         # Obtener el producto de la base de datos
@@ -182,7 +182,7 @@ def change_product_brand(product_id: UUID, change_brand: ProductBrandUpdate, db:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.put("/update_product_image/{product_id}", dependencies=[Depends(get_current_user)])
+@router.put("/update_product_image/{product_id}", dependencies=[Depends(require_role("admin"))])
 async def update_product_image(product_id: UUID, image: UploadFile = File(...), db: Session = Depends(get_db)):
     try:
         # Obtener el producto de la base de datos
@@ -214,7 +214,7 @@ async def update_product_image(product_id: UUID, image: UploadFile = File(...), 
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/delete_product/{product_id}", response_model=dict, dependencies=[Depends(get_current_user)])
+@router.delete("/delete_product/{product_id}", response_model=dict, dependencies=[Depends(require_role("admin"))])
 def delete_product(product_id: str, db: Session = Depends(get_db)):
     try:
         # Obtener el producto de la base de datos

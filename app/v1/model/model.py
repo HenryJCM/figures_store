@@ -19,7 +19,7 @@ class User(Base):
 
 
     sales = relationship('Sale', back_populates='client')
-    cart_items = relationship('Cart', back_populates='user')
+    cart_items = relationship('Cart', back_populates='client')
 
 
 # Products Table

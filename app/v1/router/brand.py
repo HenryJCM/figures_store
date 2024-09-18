@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.v1.schema.brand import BrandCreate, BrandResponse
 from app.v1.model.model import Brand
 from app.v1.service.oci_service import OCIObjectStorageService
-from app.v1.utils.db import get_db, get_current_user
+from app.v1.utils.db import get_db, require_role, get_current_user
 from typing import List
 import logging
 from uuid import uuid4, UUID
@@ -15,7 +15,7 @@ logger = logging.getLogger("uvicorn.error")
 oci_service = OCIObjectStorageService()
 
 
-@router.post("/add_brand", response_model=BrandResponse, dependencies=[Depends(get_current_user)])
+@router.post("/add_brand", response_model=BrandResponse, dependencies=[Depends(require_role("admin"))])
 def register_brand(brand: BrandCreate, db: Session = Depends(get_db)):
     try:
         # Verificar si la marca ya existe
@@ -77,7 +77,7 @@ def get_brand_by_id(id: UUID, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="An unexpected error occurred")
 
 
-@router.put("/update_brand/{brand_id}", response_model=BrandResponse, dependencies=[Depends(get_current_user)])
+@router.put("/update_brand/{brand_id}", response_model=BrandResponse, dependencies=[Depends(require_role("admin"))])
 def update_brand(brand_id: UUID, brand: BrandCreate, db: Session = Depends(get_db)):
     try:
         # Obtener la marca existente
@@ -103,7 +103,7 @@ def update_brand(brand_id: UUID, brand: BrandCreate, db: Session = Depends(get_d
     return JSONResponse(content={"message": f"Marca '{old_name}' actualizada a '{brand.name}' exitosamente."}, status_code=200)
 
 
-@router.delete("/delete_brand/{brand_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(get_current_user)])
+@router.delete("/delete_brand/{brand_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(require_role("admin"))])
 def delete_brand(brand_id: UUID, db: Session = Depends(get_db)):
     try:
         # Obtener la marca existente
