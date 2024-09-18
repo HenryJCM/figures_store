@@ -59,7 +59,7 @@ def new_sale_from_cart(db: Session = Depends(get_db), current_user: User = Depen
     return new_sale
 
 @router.get('/all_sales', response_model=List[SaleOut], dependencies=[Depends(get_current_user)])
-def read_sale(db: Session = Depends(get_db)):
+def list_sales(db: Session = Depends(get_db)):
     # Encontramos las compras
     sales = db.query(Sale).all()
 
