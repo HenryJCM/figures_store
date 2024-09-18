@@ -51,7 +51,7 @@ async def add_product_to_cart(cart: CartBase, db: Session = Depends(get_db), cur
     db.refresh(new_cart)
     return new_cart
 
-@router.get('/cart', response_model=CartListBase, dependencies=[Depends(require_role("user"))])
+@router.get('/cart', response_model=CartListBase, dependencies=[Depends(get_current_user)])
 def read_cart_by_current_user( db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     # Buscamos todos los productos en el carrito de compras
     carts = db.query(Cart).filter(Cart.client_id == current_user.id).order_by(Cart.date_added.asc())

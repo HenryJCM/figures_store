@@ -97,7 +97,7 @@ def delete_sale(id: UUID, db: Session = Depends(get_db)):
 @router.put('/sale/{id}/email', dependencies=[Depends(get_current_user)])
 async def send_sale_to_email(request: Request, id: UUID, db: Session = Depends(get_db)):
     # Encontramos la compra
-    sale = db.query(Sale).filter(Sale.id == id).first()
+    sale = db.query(Sale).get(id)
     if not sale:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Compra con el id {id} no existe en la BD")
 
