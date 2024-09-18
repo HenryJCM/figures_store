@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Form, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from app.v1.schema.brand import ProductCreate, ProductResponse
+from app.v1.schema.product import ProductUpdate, ProductResponse, ProductBrandUpdate
 from app.v1.model.model import Product, Brand
 from app.v1.service.oci_service import OCIObjectStorageService
 from app.v1.utils.db import get_db, get_current_user
@@ -16,7 +16,7 @@ logger = logging.getLogger("uvicorn.error")
 oci_service = OCIObjectStorageService()
 
 
-@router.post("/add_product/", response_model=ProductResponse)
+@router.post("/add_product/", response_model=ProductResponse, dependencies=[Depends(get_current_user)])
 def register_product(
         name: str = Form(...),
         description: str = Form(None),
@@ -83,7 +83,7 @@ def register_product(
         status_code=200)
 
 
-@router.get("/all_products", response_model=List[ProductResponse])
+@router.get("/all_products", response_model=List[ProductResponse], dependencies=[Depends(get_current_user)])
 def get_products(db: Session = Depends(get_db)):
     try:
         # Obtener todos los productos
@@ -122,7 +122,7 @@ def read_product(id: UUID, db: Session = Depends(get_db)):
     return response
 
 
-@router.put("/update_product/{id}", response_model=ProductResponse)
+@router.put("/update_product/{id}", response_model=ProductResponse, dependencies=[Depends(get_current_user)])
 def update_product(id: UUID, product_update: ProductUpdate, db: Session = Depends(get_db)):
     try:
         # Obtener el producto de la base de datos
@@ -147,7 +147,7 @@ def update_product(id: UUID, product_update: ProductUpdate, db: Session = Depend
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.put("/change_product_brand/{product_id}")
+@router.put("/change_product_brand/{product_id}", dependencies=[Depends(get_current_user)])
 def change_product_brand(product_id: UUID, change_brand: ProductBrandUpdate, db: Session = Depends(get_db)):
     try:
         # Obtener el producto de la base de datos
@@ -182,7 +182,7 @@ def change_product_brand(product_id: UUID, change_brand: ProductBrandUpdate, db:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.put("/update_product_image/{product_id}")
+@router.put("/update_product_image/{product_id}", dependencies=[Depends(get_current_user)])
 async def update_product_image(product_id: UUID, image: UploadFile = File(...), db: Session = Depends(get_db)):
     try:
         # Obtener el producto de la base de datos
@@ -214,7 +214,7 @@ async def update_product_image(product_id: UUID, image: UploadFile = File(...), 
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/delete_product/{product_id}", response_model=dict)
+@router.delete("/delete_product/{product_id}", response_model=dict, dependencies=[Depends(get_current_user)])
 def delete_product(product_id: str, db: Session = Depends(get_db)):
     try:
         # Obtener el producto de la base de datos
