@@ -34,3 +34,4 @@ typing_extensions==4.12.2
 tzdata==2024.1
 uvicorn==0.30.6
 zope.interface==7.0.3
+oci==2.133.0
