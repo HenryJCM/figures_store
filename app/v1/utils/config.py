@@ -23,5 +23,6 @@ class Settings(BaseSettings):
     from_address: str = os.getenv('FROM_ADDRESS')
     namespace_name: str = os.getenv('NAMESPACE_NAME')
     bucket_name: str = os.getenv('BUCKET_NAME')
+    bucket_endpoint: str = os.getenv('BUCKET_ENDPOINT')
 
 settings = Settings()
