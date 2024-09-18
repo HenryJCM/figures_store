@@ -96,7 +96,7 @@ def get_products(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/product/{id}")
+@router.get("/product/{id}", dependencies=[Depends(get_current_user)])
 def read_product(id: UUID, db: Session = Depends(get_db)):
     product = db.query(Product).get(id)
 
