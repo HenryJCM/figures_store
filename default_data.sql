@@ -1,20 +1,3 @@
-
-INSERT INTO brands
-  ( id, name )
-VALUES
-  ('415ef8eb-e141-4e44-9ea5-1f8dfb5b15f8', 'Funko'),
-  ('742f12ef-a896-4274-9efc-0fe604b2d335', 'Banpresto'),
-  ('946d48ad-53ed-49a3-b7a8-d4f456a9f3b4', 'Megahouse'),
-  ('ffc1f3be-74a9-4fe7-86ee-0fe51fa5422b', 'Figuarts'),
-  ('f77a0a60-e5b3-4c48-92d8-d52a2b4e24fa', 'MythCloth'),
-  ('0ae3358b-a2cc-4e2f-ac22-98abdbdddd59', 'Hasbro');
-
-INSERT INTO products
-	(id, name, description, price, image_url, stock, brand_id)
-VALUES
-	('415ef8eb-e141-4e44-9ea5-1f8dfb5b15f8', 'No Way Home - Spider-Man AAA', 'Funko Pop Marvel : No Way Home - Spider-Man AAA (Unmasked) #1073', 89.90, 'https://sevenfiguarts.com.pe/wp-content/uploads/2024/08/Funko-Pop-Marvel-No-Way-Home-Spider-Man-AAA-Unmasked-1073-P-1.png', 11, '415ef8eb-e141-4e44-9ea5-1f8dfb5b15f8'),
-	('ffc1f3be-74a9-4fe7-86ee-0fe51fa5422b', 'One Piece: Sabo - Revolutionary Army Chief of Staff', 'One Piece: Sabo - Revolutionary Army Chief of Staff', 107.65, 'https://sevenfiguarts.com.pe/wp-content/uploads/2024/09/SH-FIGUARTS-ONE-PIECE-SABO.png', 6, 'ffc1f3be-74a9-4fe7-86ee-0fe51fa5422b');
-
 -- DATOS SINCRONIZADOS CON EL BUCKET DE OCI
 INSERT INTO brands (id, name) VALUES
 ('8adea714-6522-48c5-b953-8d51129a3ef7', 'Banpresto'),

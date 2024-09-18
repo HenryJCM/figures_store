@@ -2,7 +2,6 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
 
 from app.v1.utils.config import settings
 
