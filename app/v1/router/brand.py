@@ -18,6 +18,12 @@ oci_service = OCIObjectStorageService()
 @router.post("/add_brand", response_model=BrandResponse, dependencies=[Depends(get_current_user)])
 def register_brand(brand: BrandCreate, db: Session = Depends(get_db)):
     try:
+        # Verificar si la marca ya existe
+        existing_brand = db.query(Brand).filter(Brand.name == brand.name).first()
+
+        if existing_brand:
+            raise HTTPException(status_code=400, detail="La marca ya existe.")
+
         db_brand = Brand(id=uuid4(), name=brand.name)
         # Registrar la marca en la base de datos
         db.add(db_brand)
