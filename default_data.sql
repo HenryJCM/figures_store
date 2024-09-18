@@ -15,6 +15,23 @@ VALUES
 	('415ef8eb-e141-4e44-9ea5-1f8dfb5b15f8', 'No Way Home - Spider-Man AAA', 'Funko Pop Marvel : No Way Home - Spider-Man AAA (Unmasked) #1073', 89.90, 'https://sevenfiguarts.com.pe/wp-content/uploads/2024/08/Funko-Pop-Marvel-No-Way-Home-Spider-Man-AAA-Unmasked-1073-P-1.png', 11, '415ef8eb-e141-4e44-9ea5-1f8dfb5b15f8'),
 	('ffc1f3be-74a9-4fe7-86ee-0fe51fa5422b', 'One Piece: Sabo - Revolutionary Army Chief of Staff', 'One Piece: Sabo - Revolutionary Army Chief of Staff', 107.65, 'https://sevenfiguarts.com.pe/wp-content/uploads/2024/09/SH-FIGUARTS-ONE-PIECE-SABO.png', 6, 'ffc1f3be-74a9-4fe7-86ee-0fe51fa5422b');
 
+-- DATOS SINCRONIZADOS CON EL BUCKET DE OCI
+INSERT INTO brands (id, name) VALUES
+('8adea714-6522-48c5-b953-8d51129a3ef7', 'Banpresto'),
+('a14a5d49-4cfa-4ade-b66f-23d42151b378', 'Ninjamo'),
+('fb9f6205-39e7-44dc-ac4d-752a919e11de', 'Tommy'),
+('b765c60b-d535-4912-ae80-5cab1b786cae', 'Funko'),
+('3b0acdfb-33a5-4b76-a684-bd1ff459cc3a', 'Hasbro');
+
+-- DATOS SINCRONIZADOS CON EL BUCKET DE OCI
+INSERT INTO products (id, name, description, price, image_url, stock, brand_id)
+VALUES
+('161a410b-a4fb-44b5-9709-ed83d0b5406f', 'Pikachu Figure Deluxe', 'figura de Pikachu', 200.00, 'https://id1jd0atgfra.objectstorage.us-ashburn-1.oci.customer-oci.com/p/LRU10nLEVa55NBKQR1JEX6dxfMmEJvfViqywdbBRXxCi7j4ayzuKwPWgC7p7T_0r/n/id1jd0atgfra/b/bucket-figures-store/o/Tommy/161a410b-a4fb-44b5-9709-ed83d0b5406f.jpg', 10, 'fb9f6205-39e7-44dc-ac4d-752a919e11de'),
+('2c8db97f-29f8-4505-8e27-270afb04bd5a', 'Naruto', 'Naruto', 50.00, 'https://id1jd0atgfra.objectstorage.us-ashburn-1.oci.customer-oci.com/p/LRU10nLEVa55NBKQR1JEX6dxfMmEJvfViqywdbBRXxCi7j4ayzuKwPWgC7p7T_0r/n/id1jd0atgfra/b/bucket-figures-store/o/Bandai/2c8db97f-29f8-4505-8e27-270afb04bd5a.jpg', 20, '8adea714-6522-48c5-b953-8d51129a3ef7'),
+('71310853-0b54-4306-9dc8-2f72172d9ec0', 'Lucario', 'Lucario', 35.50, 'https://id1jd0atgfra.objectstorage.us-ashburn-1.oci.customer-oci.com/p/LRU10nLEVa55NBKQR1JEX6dxfMmEJvfViqywdbBRXxCi7j4ayzuKwPWgC7p7T_0r/n/id1jd0atgfra/b/bucket-figures-store/o/Funko/71310853-0b54-4306-9dc8-2f72172d9ec0.jpg', 15, 'b765c60b-d535-4912-ae80-5cab1b786cae'),
+('a5a77b13-1631-4770-bcc1-41212107bc36', 'Goku SSJ', 'Figura de Goku', 74.90, 'https://id1jd0atgfra.objectstorage.us-ashburn-1.oci.customer-oci.com/p/LRU10nLEVa55NBKQR1JEX6dxfMmEJvfViqywdbBRXxCi7j4ayzuKwPWgC7p7T_0r/n/id1jd0atgfra/b/bucket-figures-store/o/Tommy/https://Nonebucket-figures-store/Ninjamo/a5a77b13-1631-4770-bcc1-41212107bc36.jpg', 4, 'a14a5d49-4cfa-4ade-b66f-23d42151b378');
+
+
 INSERT INTO users
 	(id, first_name, last_name, address, email, username, hashed_password, role)
 VALUES
