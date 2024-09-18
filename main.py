@@ -3,7 +3,7 @@ from sys import prefix
 
 from fastapi import FastAPI, Request
 
-from app.v1.router import auth, user, sale, cart, brand
+from app.v1.router import auth, user, sale, cart, brand, product
 
 # instanciamos la clase FastAPI
 app = FastAPI(prefix="api/v1")
@@ -38,6 +38,7 @@ app.include_router(user.router)
 app.include_router(cart.router)
 app.include_router(sale.router)
 app.include_router(brand.router)
+app.include_router(product.router)
 
 
 """
