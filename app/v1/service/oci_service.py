@@ -1,5 +1,6 @@
 # services/oci_service.py
 import oci
+from typing import BinaryIO
 from oci.exceptions import ServiceError
 from app.v1.utils.config import settings
 
@@ -9,6 +10,7 @@ class OCIObjectStorageService:
         self.config = oci.config.from_file()
         self.namespace = settings.namespace_name
         self.bucket_name = settings.bucket_name
+        self.bucket_endpoint = settings.bucket_endpoint
         self.client = oci.object_storage.ObjectStorageClient(self.config)
 
     def create_folder(self, folder_name: str):
@@ -77,3 +79,21 @@ class OCIObjectStorageService:
 
         except ServiceError as e:
             raise Exception(f"Error al eliminar la carpeta en OCI: {e.message}")
+
+    def upload_image(self, image_file: BinaryIO, image_filename: str) -> str:
+        try:
+            content_type = 'image/jpg'
+            # Subir el archivo al bucket de OCI
+            self.client.put_object(
+                namespace_name=self.namespace,
+                bucket_name=self.bucket_name,
+                object_name=image_filename,
+                put_object_body=image_file,
+                content_type=content_type  # Usar metadatos para especificar el tipo de contenido
+            )
+
+            # Generar la URL de acceso al objeto
+            image_url = f"https://{self.bucket_endpoint}{self.bucket_name}/{image_filename}"
+            return image_url
+        except Exception as e:
+            raise RuntimeError(f"Error uploading image to OCI: {str(e)}")
