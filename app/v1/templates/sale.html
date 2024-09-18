@@ -78,20 +78,19 @@
         <!-- Header Section -->
         <div class="header">
             <h1>Boleta de Venta</h1>
-            <p>Date: {{ sale.date }}</p>
+            <p>Fecha: {{ sale.date }}</p>
         </div>
 
         <!-- User Details Section -->
         <div class="details">
             <h2>Detalles del cliente</h2>
-            <p><strong>Nombre:</strong>{{ sale.user.first_name }}</p>
-            <p><strong>Correo:</strong>{{ sale.user.email }}</p>
-            <p><strong>Direccion:</strong>{{ sale.user.address }}</p>
+            <p><strong>Nombre:</strong>{{ sale.client.first_name }} {{ sale.client.last_name }}</p>
+            <p><strong>Dirección:</strong>{{ sale.client.address }}</p>
         </div>
 
         <!-- Sale Details Section -->
         <div class="details">
-            <h2>Sale Details</h2>
+            <h2>Detalles de productos</h2>
             <table class="table">
                 <thead>
                     <tr>
@@ -102,19 +101,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                {% for sale.sale_details in detail %}
+                {% for detail in sale.sale_details %}
                     <tr>
                         <td>{{ detail.product.name }}</td>
                         <td>{{ detail.quantity }}</td>
                         <td>{{ detail.unit_price }}</td>
-                        <td>{{ detail.quantity * detail.unit_price }}</td>
+                        <td>S/.{{ detail.quantity * detail.unit_price }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
                 <tfoot>
                     <tr>
                         <td colspan="3" class="total">Total</td>
-                        <td class="total">.s/{{ detail.total }}</td>
+                        <td class="total">S/.{{ sale.total }}</td>
                     </tr>
                 </tfoot>
             </table>

@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from typing import List
 from uuid import UUID
 
@@ -8,14 +8,13 @@ class SaleDetailBase(BaseModel):
     product_id: UUID
     quantity: int
     unit_price: float
-    date_added: str
 
 class SaleDetailOut(SaleDetailBase):
     id: UUID
 
 class SaleBase(BaseModel):
-    user_id: UUID
-    date: str
+    client_id: UUID
+    date: datetime
     total: float
 
 class SaleOut(SaleBase):

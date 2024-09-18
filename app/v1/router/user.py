@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.v1.model.model import User
-from app.v1.schema.schema import UserOut, UserCreate
+from app.v1.schema.user import UserOut, UserCreate
 from app.v1.utils.db import get_db, get_password_hash, get_current_user
 
 router = APIRouter()
@@ -21,6 +21,7 @@ def create_new_user(user: UserCreate, db: Session = Depends(get_db)):
         address=user.address,
         email=user.email,
         username=user.username,
+        role=user.role,
         hashed_password=hashed_password
     )
     db.add(new_user)
@@ -42,22 +43,23 @@ def read_user(id: UUID, session: Session = Depends(get_db)):
 
     return user
 
-#@router.put("/user/{id}", response_model=UserOut)
-#def update_user(id: UUID, user_update: UserCreate, session: Session = Depends(get_db)):
-#    user = session.query(User).get(id)
-#
-#    if user:
-#        user.first_name = user_update.first_name
-#        user.last_name = user_update.last_name
-#        user.address = user_update.address
-#        user.email = user_update.email
-#        session.commit()
-#
-#    if not user:
-#        raise HTTPException(status_code=404, detail=f"Usuario con id {id} no fue encontrado para actualizar")
-#
-#    return user
-#
+@router.put("/user/{id}", response_model=UserOut)
+def update_user(id: UUID, user_update: UserCreate, session: Session = Depends(get_db)):
+    user = session.query(User).get(id)
+
+    if user:
+        user.first_name = user_update.first_name
+        user.last_name = user_update.last_name
+        user.address = user_update.address
+        user.email = user_update.email
+        session.commit()
+
+    if not user:
+        raise HTTPException(status_code=404, detail=f"Usuario con id {id} no fue encontrado para actualizar")
+
+    return user
+
+
 #@router.delete("/user/{id}", status_code=status.HTTP_204_NO_CONTENT)
 #def delete_user(id: UUID, session: Session = Depends(get_db)):
 #    user = session.query(User).get(id)

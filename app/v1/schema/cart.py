@@ -7,13 +7,14 @@ from pydantic import BaseModel
 class CartBase(BaseModel):
     product_id: UUID
 
-class CartUpdate(CartBase):
+class CartUpdate(BaseModel):
     quantity: int
 
-class CartOut(CartUpdate):
+class CartOut(CartBase):
     id: UUID
-    user_id: UUID
+    client_id: UUID
     date_added: datetime
+    quantity: int
 
     class Config:
         from_attributes = True
