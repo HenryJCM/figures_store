@@ -14,9 +14,11 @@ class User(Base):
     address = Column(String, nullable=True)
     email = Column(String, nullable=True)
     username = Column(String, unique=True)
+    role = Column(String(50), nullable=False, default="user")
     hashed_password = Column(String)
 
-    sales = relationship('Sale', back_populates='user')
+
+    sales = relationship('Sale', back_populates='client')
     cart_items = relationship('Cart', back_populates='user')
 
 
@@ -28,7 +30,7 @@ class Product(Base):
     name = Column(String(100), nullable=False)
     description = Column(String, nullable=True)
     price = Column(DECIMAL(10, 2), nullable=False)
-    image_url = Column(String, nullable=True) # bucket_aws, bucket_oci
+    image_url = Column(String, nullable=True)
     stock = Column(Integer, nullable=False)
     brand_id = Column(UUID(as_uuid=True), ForeignKey('brands.id'))
 
@@ -52,12 +54,12 @@ class Cart(Base):
     __tablename__ = 'cart'
 
     id = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
-    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'))
+    client_id = Column(UUID(as_uuid=True), ForeignKey('users.id'))
     product_id = Column(UUID(as_uuid=True), ForeignKey('products.id'))
     quantity = Column(Integer, nullable=False)
     date_added = Column(DateTime, server_default=func.now())
 
-    user = relationship('User', back_populates='cart_items')
+    client = relationship('User', back_populates='cart_items')
     product = relationship('Product', back_populates='cart_items')
 
 
@@ -66,19 +68,19 @@ class Sale(Base):
     __tablename__ = 'sales'
 
     id = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
-    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'))
+    client_id = Column(UUID(as_uuid=True), ForeignKey('users.id'))
     date = Column(DateTime, server_default=func.now())
     total = Column(DECIMAL(10, 2), nullable=False)
 
     # envio de correo
 
-    user = relationship('User', back_populates='sales')
+    client = relationship('User', back_populates='sales')
     sale_details = relationship('SaleDetail', back_populates='sale')
 
     def calculate_total(self):
         total = 0
         for sale_detail in self.sale_details:
-            total += sale_detail.quantity * sale_detail.price
+            total += sale_detail.quantity * sale_detail.unit_price
         self.total = total
 
 

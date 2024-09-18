@@ -5,8 +5,9 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from app.v1.model.model import Cart, Product, User
+from app.v1.schema import cart
 from app.v1.schema.cart import CartOut, CartBase, CartListBase, CartUpdate
-from app.v1.utils.db import get_db, get_current_user
+from app.v1.utils.db import get_db, get_current_user, require_role
 
 router = APIRouter()
 
@@ -16,15 +17,15 @@ async def add_product_to_cart(cart: CartBase, db: Session = Depends(get_db), cur
     try:
         product = db.query(Product).filter(Product.id == cart.product_id).one()
     except NoResultFound:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Producto con id {id} no existe")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Producto con id {cart.product_id} no existe")
 
     if product.stock <= 0:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Producto con id {id} no tiene stock suficiente")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Producto con id {cart.product_id} no tiene stock suficiente")
 
     # Buscar si ya existe un registro en el carrito con el mismo producto
     new_cart = None
     try:
-        new_cart = db.query(Cart).filter(Cart.product_id == cart.product_id and Cart.user_id == current_user.id).one()
+        new_cart = db.query(Cart).filter(Cart.product_id == cart.product_id and Cart.client_id == current_user.id).one()
     except NoResultFound:
         pass
 
@@ -34,10 +35,10 @@ async def add_product_to_cart(cart: CartBase, db: Session = Depends(get_db), cur
             id=uuid4(),
             quantity=1,
             date_added=datetime.now(),
-            user_id=current_user.id
+            client_id=current_user.id
         )
 
-        new_cart.user = current_user
+        new_cart.client = current_user
         new_cart.product = product
     # utilizar el registro existente
     else:
@@ -50,10 +51,10 @@ async def add_product_to_cart(cart: CartBase, db: Session = Depends(get_db), cur
     db.refresh(new_cart)
     return new_cart
 
-@router.get('/cart', response_model=CartListBase, dependencies=[Depends(get_current_user)])
-def read_cart( db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+@router.get('/cart', response_model=CartListBase, dependencies=[Depends(require_role("user"))])
+def read_cart_by_current_user( db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     # Buscamos todos los productos en el carrito de compras
-    carts = db.query(Cart).filter(Cart.user_id == current_user.id).order_by(Cart.date_added.asc())
+    carts = db.query(Cart).filter(Cart.client_id == current_user.id).order_by(Cart.date_added.asc())
     if not carts:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -62,17 +63,25 @@ def read_cart( db: Session = Depends(get_db), current_user: User = Depends(get_c
     return CartListBase(items=carts)
 
 @router.put('/cart/{id}', response_model = CartOut, dependencies=[Depends(get_current_user)])
-async def update_cart(id: UUID, cart_update: CartUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+async def update_cart(id: UUID, cart_update: CartUpdate, db: Session = Depends(get_db)):
     cart = db.query(Cart).get(id)
 
-    ## validar cantidad
-
     if cart:
+        ## validar cantidad de producto y remover
+        stock_update = cart.product.stock - (cart_update.quantity - cart.quantity)
+
+        if stock_update <= 0:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Producto con id {cart.product_id} no tiene stock suficiente"
+            )
+
+        cart.product.stock = stock_update
         cart.quantity = cart_update.quantity
         db.commit()
 
     if not cart:
-        raise HTTPException(status_code=404, detail=f"Detalle del carrito de compras con id {id} no fue encontrado para actualizar")
+        raise HTTPException(status_code=404, detail=f"Detalle del carrito de compras con id {id} no fue encontrado")
 
     return cart
 
@@ -81,6 +90,9 @@ async def delete_cart(id: UUID, db: Session = Depends(get_db)):
     cart = db.query(Cart).get(id)
 
     if cart:
+        # retornar stock al producto
+        cart.product.stock = cart.product.stock + cart.quantity
+
         db.delete(cart)
         db.commit()
 

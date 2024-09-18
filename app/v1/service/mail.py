@@ -13,7 +13,7 @@ smtp_username = settings.smtp_username
 smtp_password = settings.smtp_password
 from_address = settings.from_address
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="app/v1/templates")
 
 async def send_email(to_email, subject, template, params):
     msg = MIMEMultipart("alternative")
@@ -23,7 +23,8 @@ async def send_email(to_email, subject, template, params):
 
     # Renderizar la plantilla HTML con los datos
     html_content = templates.TemplateResponse(f"{template}.html", params)
-    html_str = await html_content.body()
+    html_str = html_content.body
+    html_str = html_str.decode("utf-8")
 
     # Agregar contenido
     part = MIMEText(html_str, 'html')
@@ -40,7 +41,7 @@ async def send_email(to_email, subject, template, params):
         server.sendmail(from_address, to_email, text)
 
         return True
-    except Exception:
+    except Exception as e:
         return False
     finally:
         server.quit()  # Cierra la conexión SMTP
